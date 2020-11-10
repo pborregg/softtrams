@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppService } from '../app.service';
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ interface Member {
   templateUrl: './member-details.component.html',
   styleUrls: ['./member-details.component.css']
 })
-export class MemberDetailsComponent implements OnInit, OnChanges {
+export class MemberDetailsComponent implements OnInit, OnChanges, AfterViewInit {
   memberModel: Member;
   memberForm: FormGroup;
   submitted = false;
@@ -25,14 +25,26 @@ export class MemberDetailsComponent implements OnInit, OnChanges {
   alertMessage: String;
   teams = [];
 
-  constructor(private fb: FormBuilder, private appService: AppService, private router: Router) {}
+  private racingTeams = [];
 
-  ngOnInit() {}
+  constructor(private fb: FormBuilder, private appService: AppService, private router: Router) { }
 
-  ngOnChanges() {}
+  ngOnInit() {
+    this.racingTeams.push(this.appService.getTeams().subscribe(team => (this.teams = team)));
+  }
+
+  ngOnChanges() { }
+
+  ngAfterViewInit() {
+    console.log('Teams', this.racingTeams);
+  }
 
   // TODO: Add member to members
   onSubmit(form: FormGroup) {
     this.memberModel = form.value;
+  }
+
+  goBackToMembers(): void {
+    this.router.navigate(['/members']);
   }
 }
