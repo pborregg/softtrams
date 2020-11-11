@@ -8,6 +8,15 @@ var xssFilter = require('x-xss-protection');
 var nosniff = require('dont-sniff-mimetype');
 const request = require('request');
 
+var admin = require("firebase-admin");
+
+var serviceAccount = require("path/to/serviceAccountKey.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://softrams-f1a91.firebaseio.com"
+});
+
 const app = express();
 
 app.use(cors());
