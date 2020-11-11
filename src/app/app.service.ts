@@ -9,8 +9,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class AppService {
   api = 'http://localhost:8000/api';
   username: string;
+  fullname: string;
+  firstname: string;
+  lastname: string;
+  members: any;
 
-  constructor(private http: HttpClient) {}
+  private allMembers: any;
+
+  constructor(private http: HttpClient) { }
 
   // Returns all members
   getMembers() {
@@ -23,7 +29,40 @@ export class AppService {
     this.username = name;
   }
 
-  addMember(memberForm) {}
+  setFullName(fname: string, lname: string) {
+    this.fullname = fname + ' ' + lname;
+    console.log('FULL NAME: ' + this.fullname);
+  }
+
+  getFullname(userid: number): string {
+    return this.fullname;
+  }
+
+  addMember(memberForm) {
+
+    const pathToURL = `${this.api}/addMember`;
+    const self = this;
+    console.log('Member Form: ', memberForm);
+
+    // return this.http
+    //   .post(pathToURL, memberForm)
+    //   .pipe(catchError(this.handleError));
+
+    return new Promise((resolve, reject) => {
+      this.http.post<Object>(pathToURL, memberForm).subscribe(
+        (response: any) => {
+          console.log('Post SUCCESS Add Member Message Response: ', response);
+          resolve(response);
+        }, (error: any) => {
+          console.error('Post New Member Message Error: ', error);
+          reject(error);
+          self.handleError(error);
+        }
+      );
+    });
+
+
+  }
 
   getTeams() {
     return this.http

@@ -1,15 +1,35 @@
 #raceCar {
-  width: 50%;
-  height: 50%;
-  top: -50px;
-  position: relative;
+    width: 50%;
+    height: 50%;
+    top: -50px;
+    position: relative;
 }
 
 .logout {
-  cursor: pointer;
-  text-transform: lowercase;
+    cursor: pointer;
+    text-transform: lowercase;
 }
 
 .welcome {
-  text-transform: capitalize;
+    text-transform: capitalize;
+}
+
+.banner {
+    &-authStatus {
+        color: #fff;
+        font-size: 12px;
+        line-height: 50px;
+        padding: 0 10px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        a:hover {
+            text-decoration: underline;
+        }
+        .divider {
+            display: inline-block;
+            opacity: .5;
+            padding: 0 4px;
+        }
+    }
 }

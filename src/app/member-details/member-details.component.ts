@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AppService } from '../app.service';
 import { Router } from '@angular/router';
 
@@ -31,6 +31,7 @@ export class MemberDetailsComponent implements OnInit, OnChanges, AfterViewInit 
 
   ngOnInit() {
     this.racingTeams.push(this.appService.getTeams().subscribe(team => (this.teams = team)));
+    this.memberForm = this.createFormGroup();
   }
 
   ngOnChanges() { }
@@ -39,9 +40,36 @@ export class MemberDetailsComponent implements OnInit, OnChanges, AfterViewInit 
     console.log('Teams', this.racingTeams);
   }
 
+  createFormGroup() {
+    return new FormGroup({
+      firstName: new FormControl(''),
+      lastName: new FormControl(''),
+      jobTitle: new FormControl(''),
+      team: new FormControl(''),
+      status: new FormControl(''),
+    });
+  }
+
   // TODO: Add member to members
   onSubmit(form: FormGroup) {
+
+    let retVal: any;
+
     this.memberModel = form.value;
+    console.log('Form: ', this.memberModel);
+    this.appService.setFullName(this.memberModel.firstName, this.memberModel.lastName);
+    retVal = this.appService.addMember(this.memberModel);
+
+    if (retVal) {
+      this.goBackToMembers();
+    } else {
+      // oops!
+      console.log('ERROR: There was an error saving a member!');
+    }
+  }
+
+  revert(): void {
+    this.memberForm.reset();
   }
 
   goBackToMembers(): void {

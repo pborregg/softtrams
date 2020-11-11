@@ -12,9 +12,16 @@ import { MemberDetailsComponent } from './member-details/member-details.componen
 import { MembersComponent } from './members/members.component';
 import { LoginComponent } from './login/login.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { AuthService } from './auth/auth.service';
+import { CallbackComponent } from './pages/callback/callback.component';
 
 // We may be missing a route...
 const ROUTES = [
+
+  {
+    path: 'callback',
+    component: CallbackComponent
+  },
   {
     path: '',
     redirectTo: 'login',
@@ -54,7 +61,8 @@ const ROUTES = [
     MemberDetailsComponent,
     MembersComponent,
     LoginComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    CallbackComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +73,8 @@ const ROUTES = [
   ],
   providers: [
     AppService,
-    HttpClient
+    HttpClient,
+    AuthService
   ],
   bootstrap: [AppComponent]
 })

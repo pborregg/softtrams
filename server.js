@@ -66,7 +66,14 @@ app.get('/api/teams', (req, res) => {
 
 // Submit Form!
 app.post('/api/addMember', (req, res) => {
-
+    request('http://localhost:3000/members', (err, response, body) => {
+        if (response.statusCode <= 500) {
+            res.send(body);
+            console.log('SUCCESS! WE CREATED A NEW MEMBER!', response);
+        } else {
+            console.log('ERROR! DAMN! We blew it!', err);
+        }
+    });
 });
 
 app.get('*', (req, res) => {

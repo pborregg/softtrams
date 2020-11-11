@@ -11,9 +11,9 @@ export class MembersComponent implements OnInit {
   members = [];
 
   constructor(
-    public appService: AppService, 
+    public appService: AppService,
     private router: Router
-    ) {}
+  ) { }
 
   ngOnInit() {
     this.appService.getMembers().subscribe(members => (this.members = members));
@@ -23,7 +23,8 @@ export class MembersComponent implements OnInit {
     this.router.navigate(['/member-details']);
   }
 
-  editMemberByID(id: number) {}
+  editMemberByID(id: number) { }
 
-  deleteMemberById(id: number) {}
+  deleteMemberById(id: number) { }
+
 }
