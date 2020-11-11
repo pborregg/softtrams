@@ -2,11 +2,22 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-var hsts = require('hsts');
-const path = require('path');
-var xssFilter = require('x-xss-protection');
-var nosniff = require('dont-sniff-mimetype');
-const request = require('request');
+    const path = require('path');
+    const request = require('request');
+    const fs = require("fs");
+
+    var hsts = require('hsts');
+    var xssFilter = require('x-xss-protection');
+    var nosniff = require('dont-sniff-mimetype');
+    var member = {
+        fname: '',
+        lname: '',
+        title: '',
+        team: '',
+        status: ''
+    };
+
+
 
 // var admin = require("firebase-admin");
 
@@ -26,8 +37,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.disable('x-powered-by');
 app.use(xssFilter());
 app.use(nosniff());
-app.set('etag', false);
-app.use(
+    app.set('etag', false);
+    app.use(
     helmet({
         noCache: true
     })
@@ -47,17 +58,27 @@ app.use(
 app.get('/api/members', (req, res) => {
     request('http://localhost:3000/members', (err, response, body) => {
         if (response.statusCode <= 500) {
-            res.send(body);
+                res.send(body);
+                console.log('Res Body for members... ', body);
         }
     });
 });
 
-// TODO: Dropdown!
-app.get('/api/teams', (req, res) => {
+// TODO: Dropdown! DONE!
+    app.get('/api/teams', (req, res) => {
     request('http://localhost:3000/teams', (err, response, body) => {
         if (response.statusCode <= 500) {
             res.send(body);
-            console.log('SUCCESS', response);
+                console.log('SUCCESS', response);
+                member.push(body);
+                fs.writeFile('db.json', JSON.stringify(member), err => {
+                    if (err) {
+                        console.err('ERROR in saving a member');
+                    } else {
+                        console.log('SUCCESS!');
+                    }
+                });
+
         } else {
             console.log('ERROR: ', err);
         }
@@ -65,7 +86,8 @@ app.get('/api/teams', (req, res) => {
 });
 
 // Submit Form!
-app.post('/api/addMember', (req, res) => {
+    app.post('/api/addMember', (req, res) => {
+        req.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000', 'always');
     request('http://localhost:3000/members', (err, response, body) => {
         if (response.statusCode <= 500) {
             res.send(body);
