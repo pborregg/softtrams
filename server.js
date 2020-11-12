@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
+    const express = require('express');
+    const cors = require('cors');
+    const bodyParser = require('body-parser');
+    const helmet = require('helmet');
     const path = require('path');
     const request = require('request');
     const fs = require("fs");
@@ -28,80 +28,79 @@ const helmet = require('helmet');
 //     databaseURL: "https://softrams-f1a91.firebaseio.com"
 // });
 
-const app = express();
+    const app = express();
 
-app.use(cors());
-app.use(express.static('assets'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.disable('x-powered-by');
-app.use(xssFilter());
-app.use(nosniff());
+    app.use(cors());
+    app.use(express.static('assets'));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
+    app.disable('x-powered-by');
+    app.use(xssFilter());
+    app.use(nosniff());
     app.set('etag', false);
     app.use(
-    helmet({
-        noCache: true
-    })
-);
-app.use(
-    hsts({
-        maxAge: 15552000 // 180 days in seconds
-    })
-);
+            helmet({
+                noCache: true
+            })
+            );
+    app.use(
+            hsts({
+                maxAge: 15552000 // 180 days in seconds
+            })
+            );
 
-app.use(
-    express.static(path.join(__dirname, 'dist/softrams-racing'), {
-        etag: false
-    })
-);
+    app.use(
+            express.static(path.join(__dirname, 'dist/softrams-racing'), {
+                etag: false
+            })
+            );
 
-app.get('/api/members', (req, res) => {
-    request('http://localhost:3000/members', (err, response, body) => {
-        if (response.statusCode <= 500) {
+    app.get('/api/members', (req, res) => {
+        request('http://localhost:3000/members', (err, response, body) => {
+            if (response.statusCode <= 500) {
                 res.send(body);
                 console.log('Res Body for members... ', body);
-        }
+            }
+        });
     });
-});
 
 // TODO: Dropdown! DONE!
     app.get('/api/teams', (req, res) => {
-    request('http://localhost:3000/teams', (err, response, body) => {
-        if (response.statusCode <= 500) {
-            res.send(body);
+        request('http://localhost:3000/teams', (err, response, body) => {
+            if (response.statusCode <= 500) {
+                res.send(body);
                 console.log('SUCCESS', response);
-                member.push(body);
-                fs.writeFile('db.json', JSON.stringify(member), err => {
-                    if (err) {
-                        console.err('ERROR in saving a member');
-                    } else {
-                        console.log('SUCCESS!');
-                    }
-                });
-
-        } else {
-            console.log('ERROR: ', err);
-        }
+            } else {
+                console.log('ERROR: ', err);
+            }
+        });
     });
-});
 
 // Submit Form!
     app.post('/api/addMember', (req, res) => {
-        req.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000', 'always');
-    request('http://localhost:3000/members', (err, response, body) => {
-        if (response.statusCode <= 500) {
-            res.send(body);
-            console.log('SUCCESS! WE CREATED A NEW MEMBER!', response);
-        } else {
-            console.log('ERROR! DAMN! We blew it!', err);
-        }
+        console.log('REQ: ', req);
+        request('http://localhost:3000/members', (err, response, body) => {
+            if (response.statusCode <= 500) {
+                res.send(body);
+                console.log('RES: ', res);
+                console.log('SUCCESS! WE CREATED A NEW MEMBER!', response);
+                fs.writeFile('db.json', JSON.stringify(member), err => {
+                    if (err) {
+                        console.err('ERROR in saving a member: BODY: ', err);
+                    } else {
+                        console.log('SUCCESS saving new member!', body);
+                    }
+                });
+            } else {
+                console.log('ERROR! DAMN! We blew it!', err);
+            }
+        });
     });
-});
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/softrams-racing/index.html'));
-});
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist/softrams-racing/index.html'));
+    });
 
-app.listen('8000', () => {
-    console.log('Vrrroooom Vrrroooom! Server starting!');
-});
+    app.listen('8000', () => {
+        console.log('Vrrroooom Vrrroooom! Server starting!');
+    });
