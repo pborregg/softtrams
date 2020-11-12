@@ -9,14 +9,6 @@
     var hsts = require('hsts');
     var xssFilter = require('x-xss-protection');
     var nosniff = require('dont-sniff-mimetype');
-    var member = {
-        fname: '',
-        lname: '',
-        title: '',
-        team: '',
-        status: ''
-    };
-
 
 
 // var admin = require("firebase-admin");
@@ -84,7 +76,7 @@
                 res.send(body);
                 console.log('RES: ', res);
                 console.log('SUCCESS! WE CREATED A NEW MEMBER!', response);
-                fs.writeFile('db.json', JSON.stringify(member), err => {
+                fs.writeFile('db.json', JSON.stringify(body), err => {
                     if (err) {
                         console.err('ERROR in saving a member: BODY: ', err);
                     } else {
