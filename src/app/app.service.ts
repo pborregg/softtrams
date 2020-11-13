@@ -43,14 +43,19 @@ export class AppService {
 
         const pathToURL = `${this.api}/addMember`;
         const self = this;
-        console.log('Member Form: ', memberForm);
+        console.log('New Member to add!: ', memberForm);
 
         // return this.http
         //   .post(pathToURL, memberForm)
         //   .pipe(catchError(this.handleError));
 
+        // let data = JSON.stringify(memberForm);
+        let data = memberForm;
+
+        console.log('DATA GOING IN: ', data);
+
         return new Promise((resolve, reject) => {
-            this.http.post<Object>(pathToURL, memberForm).subscribe(
+            this.http.post<Object>(pathToURL, data).subscribe(
                 (response: any) => {
                     console.log('Post SUCCESS Add Member Message Response: ', response);
                     resolve(response);

@@ -1,1 +1,70 @@
-"[\n  {\n    \"id\": 1,\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"jobTitle\": \"Driver\",\n    \"team\": \"Formula 1 - Car 77\",\n    \"status\": \"Active\"\n  },\n  {\n    \"id\": 2,\n    \"firstName\": \"Alex\",\n    \"lastName\": \"Sainz\",\n    \"jobTitle\": \"Driver\",\n    \"team\": \"Formula 1 - Car 78\",\n    \"status\": \"Active\"\n  },\n  {\n    \"id\": 3,\n    \"firstName\": \"Jeb\",\n    \"lastName\": \"Jackson\",\n    \"jobTitle\": \"Reserve Driver\",\n    \"team\": \"Formula 1 - Car 77\",\n    \"status\": \"Inactive\"\n  }\n]"
+{
+    "members": [
+        {
+            "id": 1,
+            "firstName": "John",
+            "lastName": "Doe",
+            "jobTitle": "Driver",
+            "team": "Formula 1 - Car 77",
+            "status": "Active"
+        },
+        {
+            "id": 2,
+            "firstName": "Alex",
+            "lastName": "Sainz",
+            "jobTitle": "Driver",
+            "team": "Formula 1 - Car 78",
+            "status": "Active"
+        },
+        {
+            "id": 3,
+            "firstName": "Jeb",
+            "lastName": "Jackson",
+            "jobTitle": "Reserve Driver",
+            "team": "Formula 1 - Car 77",
+            "status": "Inactive"
+        }
+    ],
+    "teams": [
+        {
+            "id": 1,
+            "teamName": "Formula 1 - Car 77"
+        },
+        {
+            "id": 2,
+            "teamName": "Formula 1 - Car 8"
+        },
+        {
+            "id": 3,
+            "teamName": "Formula 2 - Car 54"
+        },
+        {
+            "id": 4,
+            "teamName": "Formula 2 - Car 63"
+        },
+        {
+            "id": 5,
+            "teamName": "Deutsche Tourenwagen Masters - Car 117"
+        },
+        {
+            "id": 6,
+            "teamName": "Deutsche Tourenwagen Masters - Car 118"
+        },
+        {
+            "id": 7,
+            "teamName": "World Endurance Championship - Car 99"
+        },
+        {
+            "id": 8,
+            "teamName": "World Endurance Championship - Car 5"
+        },
+        {
+            "id": 9,
+            "teamName": "World Rally Championship - Car 77"
+        },
+        {
+            "id": 10,
+            "teamName": "World Rally Championship - Car 90"
+        }
+    ]
+}
