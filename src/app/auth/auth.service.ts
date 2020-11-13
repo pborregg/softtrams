@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs';
 import * as auth0 from 'auth0-js';
 import {AUTH_CONFIG} from './auth.config.service';
+import {ENV} from 'src/app/core/env.config';
 
 @Injectable()
 export class AuthService {
@@ -22,13 +23,14 @@ export class AuthService {
     loggedIn: boolean;
     loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
     loggingIn: boolean;
+    user: string;
 
-  constructor(private router: Router) {
-    // If app auth token is not expired, request new token
-      if (JSON.parse(localStorage.getItem('expires_at')) > Date.now()) {
-          this.renewToken();
-      }
-  }
+    constructor(private router: Router) {
+        // If app auth token is not expired, request new token
+        if (JSON.parse(localStorage.getItem('expires_at')) > Date.now()) {
+            this.renewToken();
+        }
+    }
 
     setLoggedIn(value: boolean) {
         // Update login status subject
@@ -54,7 +56,7 @@ export class AuthService {
         });
     }
 
-    private _getProfile(authResult) {
+    private _getProfile(authResult: any) {
         this.loggingIn = true;
         // Use access token to retrieve user's profile and set session
         this._auth0.client.userInfo(authResult.accessToken, (err, profile) => {
@@ -66,7 +68,7 @@ export class AuthService {
         });
     }
 
-    private _setSession(authResult, profile?) {
+    private _setSession(authResult: any, profile?: auth0.Auth0UserProfile) {
         this.expiresAt = (authResult.expiresIn * 1000) + Date.now();
         // Store expiration in local storage to access in constructor
         localStorage.setItem('expires_at', JSON.stringify(this.expiresAt));
@@ -87,7 +89,7 @@ export class AuthService {
         this._clearExpiration();
         // End Auth0 authentication session
         this._auth0.logout({
-            clientId: AUTH_CONFIG.CLIENT_ID,
+            clientID: AUTH_CONFIG.CLIENT_ID,
             returnTo: ENV.BASE_URI
         });
     }
