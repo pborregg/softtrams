@@ -9,10 +9,15 @@
     var hsts = require('hsts');
     var xssFilter = require('x-xss-protection');
     var nosniff = require('dont-sniff-mimetype');
-
-    var allMembers = [];
+    var dbFileJSON = require('./db.json');
 
     var dbFile = 'db.json';
+    var dbFileMembers = [];
+    var dbFileNewMembers = [];
+    var dbFileTeams = [];
+    var dbFileNewTeams = [];
+    var dbFileNewJSON = [];
+
 
 // var admin = require("firebase-admin");
 // var serviceAccount = require("path/to/serviceAccountKey.json");
@@ -51,8 +56,9 @@
         request('http://localhost:3000/members', (err, response, body) => {
             if (response.statusCode <= 500) {
                 res.send(body);
-                allMembers.push(body);
-                console.log('Res Body for members... ', body);
+                dbFileMembers.push(body);
+                console.log('DBFILE: ', dbFileJSON);
+                console.log('SUCCESS! We got the members ', JSON.parse(dbFileMembers));
             }
         });
     });
@@ -62,9 +68,10 @@
         request('http://localhost:3000/teams', (err, response, body) => {
             if (response.statusCode <= 500) {
                 res.send(body);
-                console.log('SUCCESS', response);
+                dbFileTeams.push(body);
+                console.log('SUCCESS! We got the TEAMS! ', JSON.parse(dbFileTeams));
             } else {
-                console.log('ERROR: ', err);
+                console.log('ERROR getting TEAMS: ', err);
             }
         });
     });
@@ -93,21 +100,35 @@
                                 if (err.code === 'EEXIST') {
                                     console.error('DB JSON already exists');
 
-                                    fs.appendFile(dbFile, JSON.stringify(req.body), 'utf8', (err) => {
-                                        if (err) {
-                                            console.log('ERROR in saving a member: BODY: ', err);
-                                        } else {
-                                            console.log('SUCCESS saving new member!', req.body);
-                                        }
-                                    });
 
-//                                    fs.writeFile(dbFile, JSON.stringify(req.body), (err) => {
+                                    dbFileNewMembers.push(dbFileMembers);
+                                    dbFileNewTeams.push(dbFileTeams);
+
+                                    console.log('DB FILE NEW JSON MEMBERS:', dbFileNewMembers);
+                                    console.log('DB FILE NEW JSON TEAMS:', dbFileNewTeams);
+
+//                                    saveNewMember(req.body)
+//                                            .then(result => {
+//
+//                                                dbFileNewJSON.push(dbFileNewMembers);
+//                                                dbFileNewJSON.push(dbFileNewTeams);
+//
+//                                                console.log('DB FILE NEW JSON:', dbFileNewJSON);
+//
+//                                                console.log('RESULT OF SAVE NEW MEMBER: ', result);
+//                                            });
+
+
+
+//                                    fs.appendFile(dbFile, JSON.stringify(req.body), 'utf8', (err) => {
 //                                        if (err) {
-//                                            console.err('ERROR in saving a member: BODY: ', err);
+//                                            console.log('ERROR in saving a member: BODY: ', err);
 //                                        } else {
-//                                            console.log('SUCCESS saving new member!', body);
+//
+//                                            console.log('SUCCESS saving new member!', req.body);
 //                                        }
 //                                    });
+
                                     return;
                                 }
                                 throw err;
@@ -129,3 +150,14 @@
     app.listen('8000', () => {
         console.log('Vrrroooom Vrrroooom! Server starting!');
     });
+
+    function saveNewMember(newmember) {
+        return new Promise((resolve, reject) => {
+            dbFileMembers.push({newmember});
+            fs.writeFile(dbFile, JSON.stringify(dbFileJSON), (err) => {
+                if (err)
+                    reject(err);
+                resolve("File saved.");
+            });
+        });
+    }
