@@ -1,6 +1,9 @@
+import { Members } from './../members';
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../app.service';
 import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+
 
 @Component({
   selector: 'app-members',
@@ -8,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./members.component.css']
 })
 export class MembersComponent implements OnInit {
-  members = [];
+  public members = [];
 
   constructor(
     public appService: AppService,
@@ -16,7 +19,7 @@ export class MembersComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.appService.getMembers().subscribe(members => (this.members = members));
+    this.appService.getMembers().subscribe((members: any[]) => (this.members = members));
   }
 
   goToAddMemberForm() {

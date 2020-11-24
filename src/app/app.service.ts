@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {catchError} from 'rxjs/operators';
-import {HttpErrorResponse} from '@angular/common/http';
-
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
@@ -12,17 +12,38 @@ export class AppService {
     fullname: string;
     firstname: string;
     lastname: string;
-    members: any;
+    members: any[] = [];
 
-    private allMembers: any;
+    public allMembers: any;
+    public membersListSubject = new BehaviorSubject(this.allMembers);
+    public membersMessages = this.membersListSubject.asObservable();
 
-    constructor(private http: HttpClient) {}
+    constructor(
+        private http: HttpClient
+    ) { }
 
     // Returns all members
     getMembers() {
+
+        // const pathToURL = `${this.api}/members`;
+        // const self = this;
+
+
         return this.http
             .get(`${this.api}/members`)
             .pipe(catchError(this.handleError));
+
+        // return this.http.get(pathToURL).subscribe(
+        //     (response: any) => {
+        //         console.log('Post SUCCESS got new Member Message Response: ', response);
+        //         this.members.push(response);
+        //     }, (error: any) => {
+        //         console.error('Post New Member Message Error: ', error);
+        //         self.handleError(error);
+        //         this.members.push(error);
+        //     }
+        // );
+
     }
 
     setUsername(name: string): void {
@@ -39,7 +60,7 @@ export class AppService {
         return this.fullname;
     }
 
-    addMember(memberForm: any) {
+    addMember(memberForm: any): Promise<Object> {
 
         const pathToURL = `${this.api}/addMember`;
         const self = this;
@@ -50,15 +71,21 @@ export class AppService {
         //   .pipe(catchError(this.handleError));
 
         // let data = JSON.stringify(memberForm);
-        let data = memberForm;
+        const data = memberForm;
 
         console.log('DATA GOING IN: ', data);
 
         return new Promise((resolve, reject) => {
             this.http.post<Object>(pathToURL, data).subscribe(
                 (response: any) => {
-                    console.log('Post SUCCESS Add Member Message Response: ', response);
-                    resolve(response);
+                    if (data.length > 0) {
+                        if (response === '') {
+                            response = 'SUCCESS!';
+                        }
+                        console.log('Post SUCCESS Add Member Message Response: ', data);
+                        this.members.push(data);
+                        resolve(data);
+                    }
                 }, (error: any) => {
                     console.error('Post New Member Message Error: ', error);
                     reject(error);
@@ -69,8 +96,12 @@ export class AppService {
     }
 
     getTeams() {
+
+        const self = this;
+        const pathToURL = `${this.api}/teams`;
+
         return this.http
-            .get(`${this.api}/teams`)
+            .get(pathToURL)
             .pipe(catchError(this.handleError));
     }
 

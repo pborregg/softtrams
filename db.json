@@ -1,6 +1,5 @@
 {
-    "members": [
-        {
+    "members": [{
             "id": 1,
             "firstName": "John",
             "lastName": "Doe",
@@ -25,8 +24,7 @@
             "status": "Inactive"
         }
     ],
-    "teams": [
-        {
+    "teams": [{
             "id": 1,
             "teamName": "Formula 1 - Car 77"
         },

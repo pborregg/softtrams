@@ -18,39 +18,29 @@
     var dbFileNewTeams = [];
     var dbFileNewJSON = [];
 
-
-// var admin = require("firebase-admin");
-// var serviceAccount = require("path/to/serviceAccountKey.json");
-
-// admin.initializeApp({
-//    credential: admin.credential.cert(serviceAccount),
-//    databaseURL: "https://softrams-f1a91.firebaseio.com"
-// });
-
     const app = express();
 
     app.use(cors());
     app.use(express.static('assets'));
     app.use(bodyParser.json());
     app.use(bodyParser.raw());
-    app.use(bodyParser.urlencoded({extended: true}));
+    app.use(bodyParser.urlencoded({ extended: true }));
     app.disable('x-powered-by');
     app.use(xssFilter());
     app.use(nosniff());
     app.set('etag', false);
+
     app.use(helmet({
-        noCache: true
-    })
-            );
+        noCache: false
+    }));
+
     app.use(hsts({
         maxAge: 15552000 // 180 days in seconds
-    })
-            );
+    }));
 
     app.use(express.static(path.join(__dirname, 'dist/softrams-racing'), {
         etag: false
-    })
-            );
+    }));
 
     app.get('/api/members', (req, res) => {
         request('http://localhost:3000/members', (err, response, body) => {
@@ -63,7 +53,7 @@
         });
     });
 
-// TODO: Dropdown! DONE!
+    // TODO: Dropdown! DONE!
     app.get('/api/teams', (req, res) => {
         request('http://localhost:3000/teams', (err, response, body) => {
             if (response.statusCode <= 500) {
@@ -76,7 +66,7 @@
         });
     });
 
-// Submit Form!
+    // Submit Form!
     app.post('/api/addMember', (req, res) => {
 
         var isWriteable = 'is writable';
@@ -85,8 +75,10 @@
         console.log('REQ BODY: ', req.body);
 
         request('http://localhost:3000/addMember', (err, response, body) => {
+
             if (response.statusCode <= 500) {
                 res.send(body);
+
                 // console.log('RESPONSE!: ', response);
                 // console.log('All Members BODY!: ', body);
                 // console.log('REQ!: ', req);
@@ -97,42 +89,87 @@
                     if (!err) {
                         fs.open(dbFile, 'wx', (err, fd) => {
                             if (err) {
+                                console.log('FD: ', fd);
                                 if (err.code === 'EEXIST') {
                                     console.error('DB JSON already exists');
+                                    console.log('DB FILE JSON MEMBERS:', dbFileMembers);
+                                    console.log('DB FILE JSON TEAMS:', dbFileTeams);
 
+                                    const newMember = req.body;
 
-                                    dbFileNewMembers.push(dbFileMembers);
-                                    dbFileNewTeams.push(dbFileTeams);
+                                    app.post('/api/addMember', (req, res) => {
+                                        const filename = './db.json';
+                                        console.log('READY to SAVE NEW MEMBER: ', req.body);
+                                        request('http://localhost:3000/addMember', async(err, response, body) => {
+                                            const data = await readFileJson(filename);
+                                            console.log('READY to WRITE JSON NEW MEMBER: ', req.body);
+                                            data['newmemeber'] = req.body; // add to object
+                                            await writeFileJSON(filename, JSON.stringify(data, null, 4)); // save data to file.
+                                            res.json({ code: 1, message: 'saved to db!', data: {} })
 
-                                    console.log('DB FILE NEW JSON MEMBERS:', dbFileNewMembers);
-                                    console.log('DB FILE NEW JSON TEAMS:', dbFileNewTeams);
+                                        });
+                                    });
 
-//                                    saveNewMember(req.body)
-//                                            .then(result => {
-//
-//                                                dbFileNewJSON.push(dbFileNewMembers);
-//                                                dbFileNewJSON.push(dbFileNewTeams);
-//
-//                                                console.log('DB FILE NEW JSON:', dbFileNewJSON);
-//
-//                                                console.log('RESULT OF SAVE NEW MEMBER: ', result);
-//                                            });
+                                    function readFileJson(filename) {
+                                        return new Promise((resolve, reject) => {
+                                            fs.readFile(filename, 'utf-8', function(err, data) {
+                                                if (err) {
+                                                    console.log('READFILE JSON IF ERROR: ', err);
+                                                    return resolve({});
+                                                }
+                                                try {
+                                                    console.log('READFILE JSON SUCCESS: ', data);
+                                                    return resolve(JSON.parse(data));
+                                                } catch (err) {
+                                                    console.log('READFILE JSON CATCH ERROR: ', err);
+                                                    return resolve({});
+                                                }
+                                            });
+                                        });
+                                    }
 
+                                    function writeFileJSON(filename, data) {
+                                        return new Promise((resolve, reject) => {
+                                            fs.writeFile(filename, data, function(err, data) {
+                                                if (err) {
+                                                    console.log('WRITEFILE JSON ERROR: ', err);
+                                                    return reject(err);
+                                                }
+                                                console.log('SUCCESS WRITING NEW MEMBER: ', data);
+                                                return resolve();
+                                            });
+                                        });
+                                    }
 
+                                    // req.on('data', (newMember) => {
 
-//                                    fs.appendFile(dbFile, JSON.stringify(req.body), 'utf8', (err) => {
-//                                        if (err) {
-//                                            console.log('ERROR in saving a member: BODY: ', err);
-//                                        } else {
-//
-//                                            console.log('SUCCESS saving new member!', req.body);
-//                                        }
-//                                    });
+                                    //     var element = JSON.parse(newMember);
+                                    //     fs.readFile('db.json', 'r', (err, json) => {
+                                    //         var array = JSON.parse(json);
+                                    //         array.push(element);
+                                    //         fs.writeFile('db.json', JSON.stringify(array), 'w', (err) => {
+                                    //             if (err) {
+                                    //                 console.log('ERROR writing to JSON file: ', err);
+                                    //                 return;
+                                    //             }
+                                    //             console.log('SUCCESS! A new member was added!');
+                                    //         });
+                                    //         res.end(`{'msg': 'SUCCESS'}`);
+                                    //     });
+                                    // });
 
-                                    return;
+                                    // fs.writeFileSync('db.json', JSON.stringify(dbFile, null, 4), (err) => {
+                                    //     if (err) {
+                                    //         console.log('ERROR in saving a member: BODY: ', err);
+                                    //     } else {
+
+                                    //         console.log('SUCCESS saving new member!', req.body);
+                                    //     }
+                                    // });
                                 }
-                                throw err;
                             }
+
+
                         });
                     }
                 });
@@ -150,14 +187,3 @@
     app.listen('8000', () => {
         console.log('Vrrroooom Vrrroooom! Server starting!');
     });
-
-    function saveNewMember(newmember) {
-        return new Promise((resolve, reject) => {
-            dbFileMembers.push({newmember});
-            fs.writeFile(dbFile, JSON.stringify(dbFileJSON), (err) => {
-                if (err)
-                    reject(err);
-                resolve("File saved.");
-            });
-        });
-    }
